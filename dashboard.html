@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block title %}Dashboard | Smart Stock{% endblock %}{% block heading %}Dashboard{% endblock %}
+{% block content %}
+<p class="page-intro">Here is what's happening in your shop today.</p>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-top">Total products <span class="stat-icon green">▤</span></div><div class="stat-number">{{ total_products }}</div><small>Different items in your shop</small></div>
+<div class="stat-card"><div class="stat-top">Available stock <span class="stat-icon blue">▦</span></div><div class="stat-number">{{ total_units }}</div><small>Total units available</small></div>
+<div class="stat-card"><div class="stat-top">Low stock items <span class="stat-icon orange">♢</span></div><div class="stat-number">{{ low_count }}</div><small>Need your attention</small></div>
+<div class="stat-card"><div class="stat-top">Today's sales <span class="stat-icon purple">₹</span></div><div class="stat-number">₹{{ '%.2f'|format(today_sales) }}</div><small>Sales recorded today</small></div>
+</div>
+<div class="quick-actions"><a class="btn primary" href="{{ url_for('products') }}">＋ Add a product</a><a class="btn light" href="{{ url_for('sell') }}">＋ Record a sale</a><a class="btn light" href="{{ url_for('alerts') }}">View stock alerts</a></div>
+<div class="two-col">
+<section class="panel"><div class="panel-head"><h2>Products to restock</h2><a href="{{ url_for('alerts') }}">View all</a></div>
+{% if low_items %}<div class="table-wrap"><table><thead><tr><th>Product</th><th>Remaining</th><th>Minimum</th><th>Status</th></tr></thead><tbody>{% for p in low_items %}<tr><td><b>{{ p.name }}</b></td><td>{{ p.quantity }}</td><td>{{ p.min_stock }}</td><td><span class="pill danger">Low stock</span></td></tr>{% endfor %}</tbody></table></div>{% else %}<p class="empty">All products have enough stock. Great job!</p>{% endif %}</section>
+<section class="panel"><div class="panel-head"><h2>Recent sales</h2><a href="{{ url_for('sell') }}">Sell product</a></div>
+{% if recent %}<div class="simple-list">{% for s in recent %}<div class="list-row"><div><b>{{ s.product_name }}</b><small>{{ s.quantity }} unit(s) · {{ s.sold_at[:16].replace('T',' ') }}</small></div><strong>₹{{ '%.2f'|format(s.total) }}</strong></div>{% endfor %}</div>{% else %}<p class="empty">No sales recorded yet.</p>{% endif %}</section>
+</div>{% endblock %}

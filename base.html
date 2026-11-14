@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Smart Stock{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+{% if current_user %}
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-icon">▦</span><span>Smart Stock</span></div>
+    <div class="side-label">MENU</div>
+    <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint=='dashboard' %}active{% endif %}">▣ &nbsp; Dashboard</a>
+    <a href="{{ url_for('products') }}" class="{% if request.endpoint in ['products','edit_product'] %}active{% endif %}">▤ &nbsp; Products</a>
+    <a href="{{ url_for('sell') }}" class="{% if request.endpoint=='sell' %}active{% endif %}">🛒 &nbsp; Sell Products</a>
+    <a href="{{ url_for('alerts') }}" class="{% if request.endpoint=='alerts' %}active{% endif %}">♢ &nbsp; Stock Alerts</a>
+    <a href="{{ url_for('reports') }}" class="{% if request.endpoint=='reports' %}active{% endif %}">▥ &nbsp; Reports</a>
+    <a href="{{ url_for('settings') }}" class="{% if request.endpoint=='settings' %}active{% endif %}">⚙ &nbsp; Settings</a>
+    <div class="sidebar-bottom"><div class="user-mini"><div class="avatar">{{ current_user[0]|upper }}</div><div><b>{{ current_user }}</b><small>{{ current_role|title }}</small></div></div><a href="{{ url_for('logout') }}">↪ &nbsp; Logout</a></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><span class="eyebrow">INVENTORY MANAGEMENT</span><h1>{% block heading %}Dashboard{% endblock %}</h1></div><div class="top-user">Hello, <b>{{ current_user|title }}</b> 👋</div></header>
+    {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% else %}{% block public_content %}{% endblock %}{% endif %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/static/service-worker.js")
+        .then(() => console.log("Offline support enabled"))
+        .catch(error => console.log("Service Worker error:", error));
+}
+</script>
+</body></html>
